@@ -50,8 +50,6 @@ create_user() {
     chmod 0700 /home/${SYSTEMUSER}/.ssh
     mkdir -p /home/${SYSTEMUSER}/${TYPE}
     echo "########## Generating system user ssh keys ##########"
-    ssh-keygen -f /home/${SYSTEMUSER}/.ssh/stanley_rsa -P ""
-    cat /home/${SYSTEMUSER}/.ssh/stanley_rsa.pub >> /home/${SYSTEMUSER}/.ssh/authorized_keys
     chmod 0600 /home/${SYSTEMUSER}/.ssh/authorized_keys
     chown -R ${SYSTEMUSER}:${SYSTEMUSER} /home/${SYSTEMUSER}
     if [ $(grep 'stanley' /etc/sudoers.d/* &> /dev/null; echo $?) != 0 ]
@@ -59,6 +57,13 @@ create_user() {
       echo "${SYSTEMUSER}    ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers.d/st2
     fi
   fi
+
+  if [ ! -f //home/${SYSTEMUSER}/.ssh/stanley_rsa ]
+  then     
+    ssh-keygen -f /home/${SYSTEMUSER}/.ssh/stanley_rsa -P ""
+    cat /home/${SYSTEMUSER}/.ssh/stanley_rsa.pub >> /home/${SYSTEMUSER}/.ssh/authorized_keys
+  fi
+  chown -R ${SYSTEMUSER}:${SYSTEMUSER} /home/${SYSTEMUSER}
 }
 
 install_pip() {
